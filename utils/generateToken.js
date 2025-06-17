@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
-const jwtSecretKey = 'jhskjfheiohjcsajkjkdh';
+import { UserModel } from '../models/userModels.js';
+export const jwtSecretKey = 'jhskjfheiohjcsajkjkdh';
  
 export const generateToken = async (user) =>{
    try {
@@ -9,5 +10,25 @@ export const generateToken = async (user) =>{
    } catch (error) {
     console.log(error);
     return error;
+   }
+}
+
+
+export const decodeJWT = async(token) =>{
+   try {
+      const decoded = await jwt.verify(token, jwtSecretKey);
+
+      if(!decoded && !decoded._id){
+         console.log('Invalid Token Detected');
+         return ;
+      }
+
+   const userId = decoded._id;
+   const foundUser = await UserModel.findById(userId);
+   return foundUser;
+
+   } catch (error) {
+      console.log(error);
+      
    }
 }

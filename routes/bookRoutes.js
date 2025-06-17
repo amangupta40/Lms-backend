@@ -1,14 +1,15 @@
 import express from 'express';
 import {getBookController, createBookController,update,deleteBook} from '../controllers/bookControllers.js';
+import { checkAuthorization  } from '../middleware/checkAuthorization.js';
 const bookRouter = express.Router();
 
 
 
-bookRouter.route('/').get(getBookController)
+bookRouter.route('/').get(checkAuthorization, getBookController)
 .post(createBookController);
 
 bookRouter.route('/:id').put(update)
-.delete(deleteBook);
+.delete(checkAuthorization, deleteBook);
 
 bookRouter.get('/', (req,res) => {
     res.json({
