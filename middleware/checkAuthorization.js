@@ -6,6 +6,13 @@ export const checkAuthorization = async (req, res, next) => {
   try {
     const token = req?.body?.token;
 
+    if (!token) {
+      return res.json({
+        success: false,
+        message: "Looks like you have been logged out!",
+      });
+    }
+
     const decoded = await jwt.verify(token, jwtsecretKey);
 
     if (!decoded._id) {

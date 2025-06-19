@@ -3,24 +3,14 @@ import { decodeJWT } from "../utils/generateToken.js";
 
 export const getBooksController = async (req, res) => {
   try {
-    const jwtToken = req?.body?.token;
-
-    const foundUser = await decodeJWT(jwtToken);
-
-    console.log(foundUser);
-
-    if (!foundUser) {
-      return res.json({
-        success: false,
-        message: "You are not authorized!!!",
-      });
-    }
-
+    const user = req.user;
     const books = await BookModel.find();
 
     return res.json({
       success: true,
       data: books,
+
+      userInfo: user,
     });
   } catch (error) {
     console.log(error);

@@ -10,7 +10,7 @@ export const generateToken = async (user) => {
     return token;
   } catch (error) {
     console.log(error);
-    return error;
+    return;
   }
 };
 
