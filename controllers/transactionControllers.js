@@ -30,7 +30,7 @@ export const createTransaction = async (req, res) => {
       });
     }
 
-    if (!issuedto) {
+    if (!issuedTo) {
       return res.json({
         success: false,
         message: "No book issued if no reader exists!",
@@ -54,7 +54,7 @@ export const createTransaction = async (req, res) => {
     });
 
     return res.json({
-      success: false,
+      success: true,
       data: newTransaction,
     });
   } catch (error) {
