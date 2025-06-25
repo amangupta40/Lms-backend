@@ -101,3 +101,56 @@ export const loginUser = async (req, res) => {
     });
   }
 };
+
+export const updateUser = async(req,res) =>{
+  try {
+    const {userId} = req.params;
+    const reqBody=req.body;
+    const foundUser = await UserModel.findById(userId);
+
+    if(!foundUser){
+      return res.json({
+        success:false,
+        message:"User not found!!"
+      })
+    }
+
+    const updateUser = await UserModel.findByIdAndUpdate(userId,reqBody, {new: true,});
+     return res.json({
+      success:true,
+      data:updateUser,
+      message:"Updated user succesfully!!"
+     })
+
+  } catch (error) {
+    res.json({
+      success:false,
+      message:"Failed updated user!!"
+    })
+  }
+}
+
+export const  deleteUser = async(req,res) =>{
+  try {
+    const {userId} = req.params;
+    const reqBody=req.body;
+    const foundUser = await UserModel.findById(userId);
+
+    if(!foundUser){
+      return res.json({
+        success:false,
+        message:"User not found!!"
+      })
+    }
+     await UserModel.findByIdAndDelete(userId);
+    return res.json({
+      success:true,
+      message:"User deleted successfully!!"
+    })
+  } catch (error) {
+    res.json({
+      success:false,
+      message:"Failed!! User is not deleted"
+    })
+  }
+}
