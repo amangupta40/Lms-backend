@@ -114,7 +114,9 @@ export const updateUser = async(req,res) =>{
         message:"User not found!!"
       })
     }
-
+      //update user start here
+    
+     
     if(foundUser.id.toString() !== req.user._id.toString() && !["Admin", "Staff"].includes(req.user.role)){
       return res.json({
         success:false,
@@ -181,6 +183,14 @@ export const updatePassword = async(req,res) =>{
         message:"User not found!!"
       })
     }
+
+    if(foundUser.id.toString() !== req.user._id.toString() && !["Admin", "Staff"].includes(req.user.role)){
+      return res.json({
+        success:false,
+        message:"You cannot update passowrd of this user!"
+      })
+    }
+
     const isPasswordMatched= await foundUser.isPasswordValid(oldPassword);
     if(!isPasswordMatched){
       return res.json({
