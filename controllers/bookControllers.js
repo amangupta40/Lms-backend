@@ -6,7 +6,7 @@ export const getBooksController = async (req, res) => {
     const user = req.user;
     const books = await BookModel.find();
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       data: books,
 
@@ -14,7 +14,7 @@ export const getBooksController = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -27,13 +27,13 @@ export const createBookController = async (req, res) => {
 
     const book = await BookModel.create(reqBody);
 
-    res.json({
+    res.status(201).json({
       success: true,
       data: book,
     });
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -52,19 +52,19 @@ export const updateBookController = async (req, res) => {
         new: true,
       });
 
-      return res.json({
+      return res.status(200).json({
         success: true,
         data: updatedBook,
       });
     }
 
-    res.json({
+    res.status(400).json({
       success: false,
       message: `Book with id: ${bookId} not found!`,
     });
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -80,19 +80,19 @@ export const deleteBookController = async (req, res) => {
     if (foundBook) {
       await BookModel.findByIdAndDelete(bookId);
 
-      return res.json({
+      return res.status(204).json({
         success: true,
         message: `${foundBook.title} has been deleted successfully!`,
       });
     }
 
-    res.json({
+    res.status(400).json({
       success: false,
       message: `Book with id: ${bookId} not found!`,
     });
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });

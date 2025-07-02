@@ -24,14 +24,21 @@ const transactionSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  estimatedReturnDate:{
+    type: Date,
+  },
   returnDate: {
     type: Date,
+  },
+  returnedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
   },
   status: {
     type: String,
     enum: ["Pending", "Rejected", "Approved"],
     default: "Pending",
-  },
+  }
 });
 
 export const TransactionModel = mongoose.model(

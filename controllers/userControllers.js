@@ -8,7 +8,7 @@ export const registerUser = async (req, res) => {
     const validatedUser = validateUserSchema.validate(reqBody);
 
     if (validatedUser.error) {
-      return res.json({
+      return res.Status(400).json({
         success: false,
         message: validatedUser.error.message,
       });
@@ -17,7 +17,7 @@ export const registerUser = async (req, res) => {
     const foundUser = await UserModel.find({ email: reqBody.email });
 
     if (foundUser.length > 0) {
-      return res.json({
+      return res.status(409).json({
         success: false,
         message: `User with email: ${reqBody.email} already exists`,
       });
@@ -32,15 +32,22 @@ export const registerUser = async (req, res) => {
     // };
 
     const newUser = await UserModel.create(validatedUser.value);
-
-    return res.json({
+    const userData = {
+      name:newUser.name,
+      email:newUser.email,
+      address:newUser.address,
+      phoneNumber:newUser.phoneNumber,
+      _id:newUser._id,
+      role:newUser.role,
+    }
+    return res.status(201).json({
       success: true,
-      data: newUser,
+      data: userData,
       message: `Dear ${newUser.name}, Welcome to library management system.`,
     });
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -56,7 +63,7 @@ export const loginUser = async (req, res) => {
     console.log(foundUser);
 
     if (!foundUser) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "Invalid Credentials!!!",
       });
@@ -68,7 +75,7 @@ export const loginUser = async (req, res) => {
       const token = await generateToken({ _id: foundUser?._id });
 
       if (!token) {
-        return res.json({
+        return res.status(400).json({
           success: false,
           message: "Something went wrong!!",
         });
@@ -82,20 +89,20 @@ export const loginUser = async (req, res) => {
         token: token,
       };
 
-      return res.json({
+      return res.status(200).json({
         success: true,
         data: userData,
         message: `Welcome back ${foundUser.name}`,
       });
     }
 
-    res.json({
+    res.status(400).json({
       success: false,
       message: "Invalid Credentials!!!",
     });
   } catch (error) {
     console.log(error);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -109,7 +116,7 @@ export const updateUser = async(req,res) =>{
     const foundUser = await UserModel.findById(userId);
 
     if(!foundUser){
-      return res.json({
+      return res.status(400).json({
         success:false,
         message:"User not found!!"
       })
@@ -132,14 +139,14 @@ export const updateUser = async(req,res) =>{
     // }
 
     const updateUser = await UserModel.findByIdAndUpdate(userId,reqBody, {new: true,});
-     return res.json({
+     return res.status(200).json({
       success:true,
       data:updateUser,
       message:"Updated user succesfully!!"
      })
 
   } catch (error) {
-    res.json({
+    res.status(500).json({
       success:false,
       message:"Failed updated user!!"
     })
@@ -153,18 +160,18 @@ export const  deleteUser = async(req,res) =>{
     const foundUser = await UserModel.findById(userId);
 
     if(!foundUser){
-      return res.json({
+      return res.status(400).json({
         success:false,
         message:"User not found!!"
       })
     }
      await UserModel.findByIdAndDelete(userId);
-    return res.json({
+    return res.status(200).json({
       success:true,
       message:"User deleted successfully!!"
     })
   } catch (error) {
-    res.json({
+    res.status(500).json({
       success:false,
       message:"Failed!! User is not deleted"
     })
@@ -178,14 +185,14 @@ export const updatePassword = async(req,res) =>{
     const foundUser = await UserModel.findById(userId);
 
     if(!foundUser){
-      return res.json({
+      return res.status(400).json({
         success:false,
         message:"User not found!!"
       })
     }
 
     if(foundUser.id.toString() !== req.user._id.toString() && !["Admin", "Staff"].includes(req.user.role)){
-      return res.json({
+      return res.status(403).json({
         success:false,
         message:"You cannot update passowrd of this user!"
       })
@@ -193,7 +200,7 @@ export const updatePassword = async(req,res) =>{
 
     const isPasswordMatched= await foundUser.isPasswordValid(oldPassword);
     if(!isPasswordMatched){
-      return res.json({
+      return res.status(400).json({
         success:false,
         message:"Old password does not matched"
       })
@@ -210,14 +217,14 @@ export const updatePassword = async(req,res) =>{
       _id:foundUser._id
     }
 
-    res.json({
+    res.status(200).json({
       success:true,
       message:"Passsword updated succcessfully",
       data:userData,
     })
 
   } catch (error) {
-    res.json({
+    res.status(500).json({
       success:false,
       message:error.message,
     })
